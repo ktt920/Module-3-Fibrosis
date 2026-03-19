@@ -30,50 +30,42 @@ depths = [
 ]
 
 # Make the lists that will be used
-
-images = []
 white_counts = []
 black_counts = []
 white_percents = []
 
-# Build the list of all the images you are analyzing
+# Instead of looping through each task, for all the calculation, it is done through one loop. This makes the efficiency slightly better.
 
 for filename in filenames:
-    img = cv2.imread(filename, 0)
-    images.append(img)
+    img = cv2.imread(filename, 0) #Read the file and give it in 2D matrix array. Can be a range of numbers. 
+    # No longer store the matrix, it is not needed for anything
 
-# For each image (until the end of the list of images), calculate the number of black and white pixels and make a list that contains this information for each filename.
-
-for x in range(len(filenames)):
-    _, binary = cv2.threshold(images[x], 127, 255, cv2.THRESH_BINARY)
-
+    # For each image (until the end of the list of images), calculate the number of black and white pixels and make a list that contains this information for each filename.
+    _, binary = cv2.threshold(img, 127, 255, cv2.THRESH_BINARY)   #Cut off is 127, output either 255 or 0 for easy computation
+    #Compute how much has the code of 255 (white), nd how much have black.
     white = np.sum(binary == 255)
     black = np.sum(binary == 0)
 
+    #Add those values to a list.
     white_counts.append(white)
     black_counts.append(black)
 
-# Print the number of white and black pixels in each image.
-
-print(colored("Counts of pixel by color in each image", "yellow"))
-for x in range(len(filenames)):
-    print(colored(f"White pixels in image {x}: {white_counts[x]}", "white"))
-    print(colored(f"Black pixels in image {x}: {black_counts[x]}", "black"))
-    print()
-
-# Calculate the percentage of pixels in each image that are white and make a list that contains these percentages for each filename
-
-for x in range(len(filenames)):
-    white_percent = (
-        100 * (white_counts[x] / (black_counts[x] + white_counts[x])))
+    # Calculate the percentage of pixels in each image that are white and make a list that contains these percentages for each filename
+    white_percent = (100 * (white/ (black + white)))
     white_percents.append(white_percent)
 
+# Print the number of white and black pixels in each image.
 # Print the filename (on one line in red font), and below that line print the percent white pixels and depth into the lung where the image was obtained
-
-print(colored("Percent white px:", "yellow"))
 for x in range(len(filenames)):
+    
     print(colored(f'{filenames[x]}:', "red"))
-    print(f'{white_percents[x]}% White | Depth: {depths[x]} microns')
+    print()
+    print(colored("Pixel count in Image:", "yellow"))
+    print(colored(f"White pixels in image {filename[x]}: {white_counts[x]}", "white"))
+    print(colored(f"Black pixels in image {filename[x]}: {black_counts[x]}", "black"))
+    print()
+    print(colored("Percent white px:", "yellow"))
+    print(f'{white_percents[x]:.2f}% White | Depth: {depths[x]} microns')
     print()
 
 '''Write your data to a .csv file'''
