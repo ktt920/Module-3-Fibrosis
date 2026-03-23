@@ -9,7 +9,7 @@ import pandas as pd
 import os
 
 # Load the images you want to analyze
-directory = os.getcwd()
+directory = os.path.dirname(os.getcwd())
 
 filenames = [
     os.path.join(directory, "images", "MASK_SK658 Llobe ch010039.jpg"),
